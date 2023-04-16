@@ -1,0 +1,6 @@
+CXR8/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
