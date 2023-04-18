@@ -8,6 +8,7 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from data_utils import generate_data_train
 from PIL import Image
 
 # defining early stopping and model checkpoint
@@ -38,18 +39,6 @@ def create_datagen():
         fill_mode="nearest"
     )
 
-# generate data from csv files
-def generate_data(datagen, csv_file, image_folder):
-    return datagen.flow_from_dataframe(
-        pd.read_csv(csv_file),
-        directory=image_folder,
-        x_col='id',
-        y_col='Label',
-        target_size=image_size,
-        class_mode='binary',
-        batch_size=batch_size,
-        shuffle=True
-    )
 
 # create CNN model using ResNet50 as base model
 base_model = ResNet50(weights='imagenet', include_top=False)
@@ -68,8 +57,9 @@ model.compile(optimizer=Adam(lr=0.0001), loss='binary_crossentropy', metrics=['a
 # train model 
 train_datagen = create_datagen()
 val_datagen = create_datagen()
-train_generator = generate_data(train_datagen, train_csv, train_image_directory)
-val_generator = generate_data(val_datagen, val_csv, val_image_directory)
+train_generator = generate_data_train(train_datagen, train_csv, train_image_directory, image_size, batch_size)
+val_generator = generate_data_train(val_datagen, val_csv, val_image_directory, image_size, batch_size)
+
 
 
 # fit model 
