@@ -72,8 +72,7 @@ val_datagen = create_datagen()
 train_generator = generate_data_train(train_datagen, train_csv, train_image_directory, image_size, batch_size)
 val_generator = generate_data_train(val_datagen, val_csv, val_image_directory, image_size, batch_size)
 
-# fit model 
-# fit model
+
 model.fit(
     train_generator,
     steps_per_epoch=len(train_generator),
