@@ -52,11 +52,16 @@ predictions = Dense(1, activation='sigmoid')(x)
 model = Model(inputs=base_model.input, outputs=predictions)
 
 # freeze base model layers, train new layers only
-for layer in base_model.layers:
-    layer.trainable = False
+# for layer in base_model.layers:
+#     layer.trainable = False
+# unfreeze top layers 
+for layer in base_model.layers[-10:]:
+    layer.trainable = True
 
 # compile model with Adam optimizer and binary crossentropy loss
-model.compile(optimizer=Adam(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+# model.compile(optimizer=Adam(lr=0.0001), loss='binary_crossentropy', metrics=['accuracy'])
+# compile model with lower learning rate
+model.compile(optimizer=Adam(lr=1e-5), loss='binary_crossentropy', metrics=['accuracy'])
 
 # train model 
 train_generator = generate_data_train(train_datagen, train_csv, train_image_directory, image_size, batch_size)
@@ -68,7 +73,7 @@ model.fit(
     steps_per_epoch=len(train_generator),
     validation_data=val_generator,
     validation_steps=len(val_generator),
-    epochs=epochs,
+    epochs=5,
     # prevent overfitting
     callbacks=[early_stopping, model_checkpoint]
 )
