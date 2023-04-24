@@ -10,9 +10,10 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from data_utils import generate_data_train
 from PIL import Image
+from tensorflow.keras.layers import Dropout
 
 # defining early stopping and model checkpoint
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
 model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, verbose=1)
 
 # parameters and paths:
@@ -46,6 +47,7 @@ val_datagen = create_datagen()
 base_model = ResNet50(weights='imagenet', include_top=False)
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
+x = Dropout(0.5)(x)
 predictions = Dense(1, activation='sigmoid')(x)
 model = Model(inputs=base_model.input, outputs=predictions)
 
